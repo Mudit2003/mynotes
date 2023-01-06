@@ -120,3 +120,23 @@ Future<bool> showLogOutDialog(BuildContext context) {
         );
       }).then((value) => value ?? false);
 }
+
+Future<void> showErrorDialogue(BuildContext context, String error) {
+  return showDialog(
+    context: context,
+    builder: ((context) {
+      return AlertDialog(
+        title: const Text("An error occured"),
+        content: Text(error),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK"),
+          )
+        ],
+      );
+    }),
+  );
+}
