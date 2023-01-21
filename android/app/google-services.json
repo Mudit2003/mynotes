@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "500258807593",
+    "project_id": "mynotes-code",
+    "storage_bucket": "mynotes-code.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500258807593:android:2246a4190fa5f0a3e8e138",
+        "android_client_info": {
+          "package_name": "com.mudit.mynotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500258807593-tjktct2adfgfbgh3appaek81as46f9es.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClZHexF_SuqvEUEt-djGyUN67gGqU_7ew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500258807593-tjktct2adfgfbgh3appaek81as46f9es.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "500258807593-1bpue2a7s89pocg7jr9ipcq6fp6k2k22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mudit.mynotes"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
