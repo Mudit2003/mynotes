@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import '../utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -59,24 +60,37 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await AuthService.firebase().createUser(
                   email: email,
                   password: password,
                 );
-                final user = FirebaseAuth.instance.currentUser;
-                user?.sendEmailVerification(); // ?. - optional invocation
+                AuthService.firebase().sendEmailVerification();
                 Navigator.of(context).pushNamed(verifyEmailRoute);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  showErrorDialogue(context, 'Weak password');
-                } else if (e.code == 'email-already-in-use') {
-                  showErrorDialogue(context, "Email already registered");
-                } else if (e.code == 'invalid-email') {
-                  showErrorDialogue(context, "Invalid email ID");
-                }
+              } on WeakPasswordAuthException catch (_) {
+                showErrorDialogue(
+                  context,
+                  "Weak Password",
+                );
+              } on EmailAlreadyInUseAuthException catch (_) {
+                showErrorDialogue(
+                  context,
+                  "Email Already In Use",
+                );
+              } on InavalidEmailAuthException catch (_) {
+                showErrorDialogue(
+                  context,
+                  "Invalid Email ID",
+                );
+              } on GenericAuthException catch (_) {
+                showErrorDialogue(
+                  context,
+                  "Registration Failed",
+                );
               }
             },
-            child: const Text('Register'),
+            child: const Text(
+              'Register',
+            ),
           ),
           TextButton(
             onPressed: () {
