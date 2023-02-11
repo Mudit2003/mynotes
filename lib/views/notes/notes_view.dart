@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/crud_exceptions.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
+import 'package:mynotes/views/notes/notes_list_view.dart';
 import 'dart:developer' as devtools show log;
 import '../../constants/routes.dart';
 import '../../enums/menu_action.dart';
-import '../../utilities/show_error_dialog.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -85,18 +86,10 @@ class _NotesViewState extends State<NotesView> {
                       // return const Text("Waiting for all Notes");
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return ListTile(
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
+                        return NotesListView(
+                          notes: allNotes,
+                          onDeleteNote: (note) {
+                            _notesService.deleteNote(id: note.id);
                           },
                         );
                       } else {
