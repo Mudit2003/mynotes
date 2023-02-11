@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
@@ -41,6 +43,7 @@ class _NewNoteViewState extends State<NewNoteView> {
   Future<DatabaseNote> createNewNote() async {
     final exisitngNote = _note;
     if (exisitngNote != null) {
+      log("not null");
       return exisitngNote;
     }
     final currentUser = AuthService.firebase().currentUser!;

@@ -10,13 +10,18 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
-  // hacky way of creating a singleton in dart 
+  // hacky way of creating a singleton in dart
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
-  factory NotesService() => _shared; 
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
+  factory NotesService() => _shared;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
@@ -135,9 +140,9 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     final notes = await db.query(
       noteTable,
+      limit: 1,
       where: "id=?",
       whereArgs: [id],
-      limit: 1,
     );
     if (notes.isEmpty) {
       throw CouldNotFindNote();
@@ -168,17 +173,18 @@ class NotesService {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
+    // make sure note exists
     await getNote(
         id: note
             .id); // at this point I am waiting to find if the note is really there
-    final updateCount = await db.update(
+    final updatesCount = await db.update(
       noteTable,
       {
         textColumn: text,
         isSyncedWithCloudColumn: 0,
       },
     );
-    if (updateCount == 0) {
+    if (updatesCount == 0) {
       throw CouldNotUpdateNotes();
     } else {
       final updatedNote = await getNote(id: note.id);
@@ -335,7 +341,7 @@ const createNoteTable = ''' CREATE TABLE "notes" (
 	FOREIGN KEY("user_id") REFERENCES "user"("id")
 );''';
 const dbName = 'notes.db';
-const noteTable = 'note';
+const noteTable = 'notes';
 const userTable = 'user';
 const idColumn = 'id';
 const emailColumn = 'email';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/crud_exceptions.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
 import 'dart:developer' as devtools show log;
 import '../../constants/routes.dart';
@@ -21,15 +22,20 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     _notesService = NotesService();
-    _notesService.open();
+    try {
+      _notesService.open();
+    } on DatabaseAlreadyOpenException {
+      _notesService.close();
+      _notesService.open();
+    }
     super.initState();
   }
 
-  @override
+/*  @override
   void dispose() {
     _notesService.close();
     super.dispose();
-  }
+  }*/ // removing it because closing notesService is closing the database in turn
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +79,29 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                    // stream contains zero values 
+                    // stream contains zero values
                     case ConnectionState.active:
-                    // implicit fallthrough from waiting to active case 
-                      return const Text("Waiting for all notes");
+                      // implicit fallthrough from waiting to active case
+                      // return const Text("Waiting for all Notes");
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }
