@@ -8,6 +8,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
 
+// We dont use it anymore we use firecloud 
 class NotesService {
   Database? _db;
 
