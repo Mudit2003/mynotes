@@ -58,70 +58,89 @@ class _LoginViewState extends State<LoginView> {
               hintText: 'Enter your password here',
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              // try {
-              context.read<AuthBloc>().add(
-                    AuthEventLogIn(
-                      email,
-                      password,
-                    ),
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                final exception = state.exception;
+                if (exception is UserNotFoundAuthException ||
+                    exception is WrongPasswordAuthException) {
+                  await showErrorDialogue(
+                    context,
+                    "Invalid Credential", // safer from hackers
                   );
-              // final state = context.read<AuthBloc>().state;
-              // if (state is AuthStateLogInFailure) {
-              //   if (state.exception is UserNotFoundAuthException) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "User not found",
-              //     );
-              //   } else if (state.exception is WrongPasswordAuthException) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Wrong Password",
-              //     );
-              //   } else if (state.exception is InavalidEmailAuthException) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Invalid Email",
-              //     );
-              //   } else if (state.exception is GenericAuthException) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Login Failed",
-              //     );
-              //   } else {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Login Failure",
-              //     );
-              //   }
-              // }  // wasted code because all the listening is done in main 
-
-              //   } on UserNotFoundAuthException catch (_) {
-              // await showErrorDialogue(
-              //   context,
-              //   "User not found",
-              // );
-              //   } on WrongPasswordAuthException catch (_) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Wrong credentials",
-              //     );
-              //   } on InavalidEmailAuthException catch (_) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "User Invalid",
-              //     );
-              //   } on GenericAuthException catch (_) {
-              //     await showErrorDialogue(
-              //       context,
-              //       "Login Failed",
-              //     );
-              //   }
+                } else if (exception is GenericAuthException) {
+                  await showErrorDialogue(
+                    context,
+                    "Authentication error",
+                  );
+                }
+              }
             },
-            child: const Text('Login'),
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                // try {
+                context.read<AuthBloc>().add(
+                      AuthEventLogIn(
+                        email,
+                        password,
+                      ),
+                    );
+                // final state = context.read<AuthBloc>().state;
+                // if (state is AuthStateLogInFailure) {
+                //   if (state.exception is UserNotFoundAuthException) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "User not found",
+                //     );
+                //   } else if (state.exception is WrongPasswordAuthException) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Wrong Password",
+                //     );
+                //   } else if (state.exception is InavalidEmailAuthException) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Invalid Email",
+                //     );
+                //   } else if (state.exception is GenericAuthException) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Login Failed",
+                //     );
+                //   } else {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Login Failure",
+                //     );
+                //   }
+                // }  // wasted code because all the listening is done in main
+
+                //   } on UserNotFoundAuthException catch (_) {
+                // await showErrorDialogue(
+                //   context,
+                //   "User not found",
+                // );
+                //   } on WrongPasswordAuthException catch (_) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Wrong credentials",
+                //     );
+                //   } on InavalidEmailAuthException catch (_) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "User Invalid",
+                //     );
+                //   } on GenericAuthException catch (_) {
+                //     await showErrorDialogue(
+                //       context,
+                //       "Login Failed",
+                //     );
+                //   }
+              },
+              child: const Text('Login'),
+            ),
           ),
           TextButton(
             onPressed: () {
