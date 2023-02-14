@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -59,42 +62,64 @@ class _LoginViewState extends State<LoginView> {
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
-              try {
-                await AuthService.firebase().logIn(
-                  email: email,
-                  password: password,
-                );
-                final user = AuthService.firebase().currentUser;
-                if (user?.isEmailVerified ?? false) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (route) => false,
+              // try {
+              context.read<AuthBloc>().add(
+                    AuthEventLogIn(
+                      email,
+                      password,
+                    ),
                   );
-                } else {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      verifyEmailRoute, (route) => false);
-                }
-              } on UserNotFoundAuthException catch (_) {
-                await showErrorDialogue(
-                  context,
-                  "User not found",
-                );
-              } on WrongPasswordAuthException catch (_) {
-                await showErrorDialogue(
-                  context,
-                  "Wrong credentials",
-                );
-              } on InavalidEmailAuthException catch (_) {
-                await showErrorDialogue(
-                  context,
-                  "User Invalid",
-                );
-              } on GenericAuthException catch (_) {
-                await showErrorDialogue(
-                  context,
-                  "Login Failed",
-                );
-              }
+              // final state = context.read<AuthBloc>().state;
+              // if (state is AuthStateLogInFailure) {
+              //   if (state.exception is UserNotFoundAuthException) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "User not found",
+              //     );
+              //   } else if (state.exception is WrongPasswordAuthException) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Wrong Password",
+              //     );
+              //   } else if (state.exception is InavalidEmailAuthException) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Invalid Email",
+              //     );
+              //   } else if (state.exception is GenericAuthException) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Login Failed",
+              //     );
+              //   } else {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Login Failure",
+              //     );
+              //   }
+              // }  // wasted code because all the listening is done in main 
+
+              //   } on UserNotFoundAuthException catch (_) {
+              // await showErrorDialogue(
+              //   context,
+              //   "User not found",
+              // );
+              //   } on WrongPasswordAuthException catch (_) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Wrong credentials",
+              //     );
+              //   } on InavalidEmailAuthException catch (_) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "User Invalid",
+              //     );
+              //   } on GenericAuthException catch (_) {
+              //     await showErrorDialogue(
+              //       context,
+              //       "Login Failed",
+              //     );
+              //   }
             },
             child: const Text('Login'),
           ),

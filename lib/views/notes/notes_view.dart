@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/firebase_cloud_storage.dart';
+import 'package:mynotes/utilities/dialogs/error_dialog.dart';
 import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
 import 'package:mynotes/views/notes/notes_list_view.dart';
 
@@ -46,11 +51,18 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                    await AuthService.firebase().logOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (_) => false,
-                    );
+                    // await AuthService.firebase().logOut();
+
+                    context.read<AuthBloc>().add(
+                          const AuthEventLogOut(),
+                        );
+                    // final state = context.read<AuthBloc>().state;
+                    // if (state is AuthStateLogOutFailure) {
+                    //   showErrorDialogue(
+                    //     context,
+                    //     'LogOut Failure',
+                    //  );  // wasted code because all the listening is done in the main
+                    // }
                   }
               }
             },
@@ -117,7 +129,8 @@ class _NotesViewState extends State<NotesView> {
                 return NotesListView(
                   notes: allNotes,
                   onDeleteNote: (note) async {
-                    await _notesService.deleteNote(documentId: note.documentsId);
+                    await _notesService.deleteNote(
+                        documentId: note.documentsId);
                   },
                   onTap: (note) {
                     Navigator.of(context).pushNamed(
@@ -129,8 +142,11 @@ class _NotesViewState extends State<NotesView> {
               } else {
                 return const CircularProgressIndicator();
               }
-            default:
+            // default:
+            case ConnectionState.none:
               return const CircularProgressIndicator();
+            case ConnectionState.done:
+              return const Center(child: CircularProgressIndicator());
           }
         },
       ),
