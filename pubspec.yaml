@@ -48,6 +48,7 @@ dependencies:
   bloc: ^8.1.1
   flutter_bloc: ^8.1.2
   event_bloc: ^4.2.0
+  equatable: ^2.0.5
 
 
 dev_dependencies:
