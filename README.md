@@ -28,10 +28,10 @@ cd mynotes
 flutter pub get
 
 # Set up Firebase
-# 1. Create a new project in the Firebase Console: https://console.firebase.google.com/
-# 2. Add Android/iOS apps to your project.
-# 3. Download `google-services.json` (for Android) or `GoogleService-Info.plist` (for iOS)
-# 4. Place them in the appropriate directories in your Flutter project.
+ 1. Create a new project in the Firebase Console: https://console.firebase.google.com/
+ 2. Add Android/iOS apps to your project.
+ 3. Download `google-services.json` (for Android) or `GoogleService-Info.plist` (for iOS)
+ 4. Place them in the appropriate directories in your Flutter project.
 
 # Run the application
 ```bash
